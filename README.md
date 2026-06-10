@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.pinimg.com/736x/ed/41/b9/ed41b9da2d4f50a0f5d99a871d84fdb3.jpg" alt="Nerv banner" width="720">
+  <img src="https://i.pinimg.com/736x/ed/41/b9/ed41b9da2d4f50a0f5d99a871d84fdb3.jpg" alt="Nerv banner" width="300">
 </p>
 
 # Nerv
