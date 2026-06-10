@@ -1,4 +1,4 @@
-module nerv
+module github.com/aman333nolawz/nerv
 
 go 1.26.3
 
