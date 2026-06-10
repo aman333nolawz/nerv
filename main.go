@@ -17,7 +17,11 @@ var CLI struct {
 
 	Toggle struct {
 		Ids []int `arg:"" optional:"" name:"ids" help:"IDs of tasks to toggle"`
-	} `cmd:"" help:"Toggle the status of a task"`
+	} `cmd:"" help:"Toggle the status of tasks"`
+
+	Rm struct {
+		Ids []int `arg:"" optional:"" name:"ids" help:"IDs of tasks to remove"`
+	} `cmd:"" help:"Remove tasks"`
 }
 
 func main() {
@@ -39,6 +43,8 @@ func main() {
 		}
 	case "toggle", "toggle <ids>":
 		toggleTasks(CLI.Toggle.Ids...)
+	case "rm", "rm <ids>":
+		removeTasks(CLI.Rm.Ids...)
 	}
 
 	saveTasks()

@@ -11,6 +11,7 @@ type MsgType string
 const (
 	Add    MsgType = "add"
 	Toggle MsgType = "toggle"
+	Remove MsgType = "remove"
 	Error  MsgType = "error"
 )
 
@@ -25,6 +26,14 @@ var toggleStyle = lipgloss.NewStyle().
 	Foreground(lipgloss.Color("#0A0A0A")).
 	Background(lipgloss.Color("#F2E86D")).
 	PaddingRight(1).PaddingLeft(1)
+
+var removeStyle = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#FFFFFF")).
+	Background(lipgloss.Color("#D75F5F")).
+	PaddingRight(1).PaddingLeft(1)
+
+var removeSelectedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("160")).Strikethrough(true)
 
 var errorStyle = lipgloss.NewStyle().
 	Bold(true).
@@ -47,6 +56,8 @@ func Log(msg string, msgType MsgType) {
 		lipgloss.Printf("%s %s\n", addStyle.Render("Add"), msg)
 	case Toggle:
 		lipgloss.Printf("%s %s\n", toggleStyle.Render("Toggle"), msg)
+	case Remove:
+		lipgloss.Printf("%s %s\n", removeStyle.Render("Remove"), msg)
 	case Error:
 		lipgloss.Fprintf(os.Stderr, "%s %s\n", errorStyle.Render("Error"), msg)
 	}

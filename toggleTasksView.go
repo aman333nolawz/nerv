@@ -26,23 +26,23 @@ func newStyles(darkBG bool) styles {
 	return s
 }
 
-type item struct {
+type toggleItem struct {
 	index int
 }
 
-func (i item) FilterValue() string {
+func (i toggleItem) FilterValue() string {
 	return tasks[i.index].Desc
 }
 
-type itemDelegate struct {
+type toggleItemDelegate struct {
 	styles *styles
 }
 
-func (d itemDelegate) Height() int                             { return 1 }
-func (d itemDelegate) Spacing() int                            { return 0 }
-func (d itemDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd { return nil }
-func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
-	i, ok := listItem.(item)
+func (d toggleItemDelegate) Height() int                             { return 1 }
+func (d toggleItemDelegate) Spacing() int                            { return 0 }
+func (d toggleItemDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd { return nil }
+func (d toggleItemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+	i, ok := listItem.(toggleItem)
 	if !ok {
 		return
 	}
@@ -61,43 +61,43 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	fmt.Fprint(w, fn(str))
 }
 
-type model struct {
+type toggleModel struct {
 	list     list.Model
 	choice   string
 	styles   styles
 	quitting bool
 }
 
-func initialModel() model {
+func initialToggleModel() toggleModel {
 	var items []list.Item
 
 	for i := range tasks {
-		items = append(items, item{i})
+		items = append(items, toggleItem{i})
 	}
 
 	const defaultWidth = 20
 
-	l := list.New(items, itemDelegate{}, defaultWidth, min(len(tasks)+3, listHeight))
+	l := list.New(items, toggleItemDelegate{}, defaultWidth, listHeight)
+	l.Title = "Toggle tasks"
 	l.SetShowStatusBar(false)
-	l.SetShowTitle(false)
 	l.SetShowHelp(false)
 
-	m := model{list: l}
+	m := toggleModel{list: l}
 	m.updateStyles(true) // default to dark styles.
 	return m
 }
 
-func (m *model) updateStyles(isDark bool) {
+func (m *toggleModel) updateStyles(isDark bool) {
 	m.styles = newStyles(isDark)
 	m.list.Styles.PaginationStyle = m.styles.pagination
-	m.list.SetDelegate(itemDelegate{styles: &m.styles})
+	m.list.SetDelegate(toggleItemDelegate{styles: &m.styles})
 }
 
-func (m model) Init() tea.Cmd {
+func (m toggleModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m toggleModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
@@ -112,7 +112,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "space", "enter":
 			// prevent accidentally toggling while pressing enter or space during filtering
 			if m.list.FilterState() != list.Filtering {
-				selected, ok := m.list.SelectedItem().(item)
+				selected, ok := m.list.SelectedItem().(toggleItem)
 				if !ok {
 					return m, nil
 				}
@@ -128,6 +128,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() tea.View {
-	return tea.NewView(m.list.View())
+func (m toggleModel) View() tea.View {
+	if m.quitting {
+		return tea.NewView("")
+	}
+	v := tea.NewView(m.list.View())
+	v.AltScreen = true
+	return v
 }
