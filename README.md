@@ -4,6 +4,8 @@
 
 # Nerv
 
+[![AUR version](https://img.shields.io/aur/version/nerv-git?label=AUR&logo=archlinux)](https://aur.archlinux.org/packages/nerv-git)
+
 Nerv is a small terminal todo application written in Go.
 
 There are already a lot of todo apps, but this project exists for a more personal reason: building a custom one makes it easy to change the workflow, behavior, and interface whenever needed. It is also a learning project for practicing Go and improving by building something useful from scratch.
@@ -23,13 +25,27 @@ There are already a lot of todo apps, but this project exists for a more persona
 
 ## Installation
 
-Clone the repository and build the binary:
+Install with Go:
+
+```sh
+go install github.com/aman333nolawz/nerv@latest
+```
+
+Make sure your Go binary directory is in `PATH`. It is usually `~/go/bin`.
+
+On Arch Linux, install from the AUR:
+
+```sh
+yay -S nerv-git
+```
+
+You can also clone the repository and build the binary locally:
 
 ```sh
 go build -o nerv .
 ```
 
-Run it from the project directory:
+Then run it from the project directory:
 
 ```sh
 ./nerv --help
