@@ -9,14 +9,21 @@ import (
 type MsgType string
 
 const (
-	Add   MsgType = "add"
-	Error MsgType = "error"
+	Add    MsgType = "add"
+	Toggle MsgType = "toggle"
+	Error  MsgType = "error"
 )
 
 var addStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(lipgloss.Color("#0A0A0A")).
 	Background(lipgloss.Color("#13E68C")).
+	PaddingRight(1).PaddingLeft(1)
+
+var toggleStyle = lipgloss.NewStyle().
+	Bold(true).
+	Foreground(lipgloss.Color("#0A0A0A")).
+	Background(lipgloss.Color("#F2E86D")).
 	PaddingRight(1).PaddingLeft(1)
 
 var errorStyle = lipgloss.NewStyle().
@@ -38,6 +45,8 @@ func Log(msg string, msgType MsgType) {
 	switch msgType {
 	case Add:
 		lipgloss.Printf("%s %s\n", addStyle.Render("Add"), msg)
+	case Toggle:
+		lipgloss.Printf("%s %s\n", toggleStyle.Render("Toggle"), msg)
 	case Error:
 		lipgloss.Fprintf(os.Stderr, "%s %s\n", errorStyle.Render("Error"), msg)
 	}

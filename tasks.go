@@ -27,6 +27,13 @@ const tasksFilePath = "tasks.json"
 
 var tasks []Task
 
+func (t Task) Render() string {
+	if t.Done {
+		return doneStyle.Render(t.Desc)
+	}
+	return t.Desc
+}
+
 func initTask(desc string) Task {
 	task := Task{
 		Desc: desc,
@@ -84,9 +91,22 @@ func listTasks(filter FilterDone) {
 	}
 }
 
-func toggleTask() {
-	if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
+func toggleTasks(ids ...int) {
+	// Toggle UI to select whichever you like to toggle if no param is supplied
+	if len(ids) == 0 {
+		if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
+			Log(fmt.Sprintf("Failed to toggle tasks: %v", err), Error)
+			os.Exit(1)
+		}
+		return
+	}
+
+	for _, id := range ids {
+		if id >= 1 && id <= len(tasks) {
+			tasks[id-1].Done = !tasks[id-1].Done
+			Log(tasks[id-1].Render(), Toggle)
+		} else {
+			Log(fmt.Sprintf("Invalid task ID: %d", id), Error)
+		}
 	}
 }

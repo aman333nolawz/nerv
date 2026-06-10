@@ -48,10 +48,7 @@ func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list
 	}
 
 	task := tasks[i.index]
-	text := task.Desc
-	if task.Done {
-		text = doneStyle.Render(text)
-	}
+	text := task.Render()
 	str := fmt.Sprintf("%d. %s", index+1, text)
 
 	fn := d.styles.item.Render

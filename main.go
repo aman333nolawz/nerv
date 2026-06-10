@@ -1,41 +1,44 @@
 package main
 
 import (
-	"flag"
-	"fmt"
-	"os"
 	"strings"
+
+	"github.com/alecthomas/kong"
 )
 
+var CLI struct {
+	Add struct {
+		Task []string `arg:"" name:"task" help:"Task description"`
+	} `cmd:"" help:"Add a new task"`
+
+	List struct {
+		Filter string `arg:"" default:"todo" enum:"all,todo,done" help:"Filter listing"`
+	} `cmd:"" help:"List all tasks"`
+
+	Toggle struct {
+		Ids []int `arg:"" optional:"" name:"ids" help:"IDs of tasks to toggle"`
+	} `cmd:"" help:"Toggle the status of a task"`
+}
+
 func main() {
-	addCommand := flag.NewFlagSet("add", flag.ExitOnError)
-	listCommand := flag.NewFlagSet("list", flag.ExitOnError)
-
-	if len(os.Args) < 2 {
-		fmt.Println("Subcommand not supplied")
-		os.Exit(1)
-	}
-
+	ctx := kong.Parse(&CLI)
 	loadTasks()
-	switch os.Args[1] {
-	case "add":
-		addCommand.Parse(os.Args[2:])
-		task := strings.Join(addCommand.Args(), " ")
+
+	switch ctx.Command() {
+	case "add <task>":
+		task := strings.Join(CLI.Add.Task, " ")
 		addTask(task)
-	case "list":
-		listCommand.Parse(os.Args[2:])
-		if strings.ToLower(listCommand.Arg(0)) == "all" {
+	case "list", "list <filter>":
+		switch strings.ToLower(CLI.List.Filter) {
+		case string(All):
 			listTasks(All)
-		} else if strings.ToLower(listCommand.Arg(0)) == "done" {
+		case string(Done):
 			listTasks(Done)
-		} else {
+		case string(Todo):
 			listTasks(Todo)
 		}
-	case "toggle":
-		toggleTask()
-	default:
-		fmt.Printf("Unknown command: %s\n", os.Args[1])
-		os.Exit(1)
+	case "toggle", "toggle <ids>":
+		toggleTasks(CLI.Toggle.Ids...)
 	}
 
 	saveTasks()
