@@ -108,7 +108,7 @@ func (m removeModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					toRemoveIds = append(toRemoveIds, item.(removeItem).index+1)
 				}
 			}
-			removeTasksWithoutLog(toRemoveIds...)
+			removeTasksByID(false, toRemoveIds...)
 
 			return m, tea.Quit
 

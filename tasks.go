@@ -111,30 +111,6 @@ func toggleTasks(ids ...int) {
 	}
 }
 
-func removeTasksWithoutLog(ids ...int) {
-	idsToRemove := make(map[int]bool)
-	for _, id := range ids {
-		if id >= 1 && id <= len(tasks) {
-			idsToRemove[id-1] = true
-		} else {
-			Log(fmt.Sprintf("Invalid task ID: %d", id), Error)
-		}
-	}
-
-	if len(idsToRemove) == 0 {
-		return
-	}
-
-	var remaining []Task
-	for i, task := range tasks {
-		if idsToRemove[i] {
-			continue
-		}
-		remaining = append(remaining, task)
-	}
-	tasks = remaining
-}
-
 func removeTasks(ids ...int) {
 	if len(ids) == 0 {
 		if _, err := tea.NewProgram(initialRemoveModel()).Run(); err != nil {
@@ -144,6 +120,10 @@ func removeTasks(ids ...int) {
 		return
 	}
 
+	removeTasksByID(true, ids...)
+}
+
+func removeTasksByID(log bool, ids ...int) {
 	idsToRemove := make(map[int]bool)
 	for _, id := range ids {
 		if id >= 1 && id <= len(tasks) {
@@ -160,7 +140,9 @@ func removeTasks(ids ...int) {
 	var remaining []Task
 	for i, task := range tasks {
 		if idsToRemove[i] {
-			Log(task.Render(), Remove)
+			if log {
+				Log(task.Render(), Remove)
+			}
 			continue
 		}
 		remaining = append(remaining, task)
