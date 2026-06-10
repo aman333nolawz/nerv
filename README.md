@@ -15,7 +15,7 @@ There are already a lot of todo apps, but this project exists for a more persona
 - Toggle tasks between todo and done.
 - Remove tasks by ID.
 - Use interactive terminal views when toggling or removing without IDs.
-- Store tasks locally in `tasks.json`.
+- Store tasks locally in `~/.local/share/nerv/tasks.json`.
 
 ## Requirements
 
@@ -168,7 +168,7 @@ Arguments:
 
 ## Data
 
-Tasks are saved in a local `tasks.json` file in the directory where Nerv is run. Each task stores:
+Tasks are saved in `~/.local/share/nerv/tasks.json` by default, or under `$XDG_DATA_HOME/nerv/tasks.json` when `XDG_DATA_HOME` is set. Each task stores:
 
 - `desc`: the task description
 - `done`: whether the task is completed

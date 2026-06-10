@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
@@ -23,7 +24,7 @@ type Task struct {
 	Done bool   `json:"done"`
 }
 
-const tasksFilePath = "tasks.json"
+var tasksFilePath = filepath.Join(userDataDir(), "nerv", "tasks.json")
 
 var tasks []Task
 
@@ -66,11 +67,29 @@ func saveTasks() {
 		Log(fmt.Sprintf("Failed to save tasks: %v", err), Error)
 		os.Exit(1)
 	}
+	err = os.MkdirAll(filepath.Dir(tasksFilePath), 0755)
+	if err != nil {
+		Log(fmt.Sprintf("Failed to create tasks directory: %v", err), Error)
+		os.Exit(1)
+	}
 	err = os.WriteFile(tasksFilePath, fileData, 0644)
 	if err != nil {
 		Log(fmt.Sprintf("Failed to save tasks: %v", err), Error)
 		os.Exit(1)
 	}
+}
+
+func userDataDir() string {
+	if dataHome := os.Getenv("XDG_DATA_HOME"); dataHome != "" {
+		return dataHome
+	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "."
+	}
+
+	return filepath.Join(home, ".local", "share")
 }
 
 func addTask(desc string) {
